@@ -16,11 +16,11 @@ declare var Razorpay: any;
 
 export class AddToCartComponent implements AfterViewInit, OnInit {
 
-  constructor(private router:Router, private toastr: ToastrService,public dialog: MatDialog, private service: UserService) { 
-  
+  constructor(private router:Router, private toastr: ToastrService,public dialog: MatDialog, private service: UserService) {
+
   }
   // currentUser:any=[];
-   finalTotal: number=0; 
+   finalTotal: number=0;
    address=""
   dataSource: any
   arr: any[] = JSON.parse(localStorage.getItem("order")!);
@@ -30,9 +30,9 @@ export class AddToCartComponent implements AfterViewInit, OnInit {
 
 
     this.service.getMessageToAddToCart().subscribe((data)=>{
-     this.address=data;     
+     this.address=data;
       this.paynow();
-     
+
     })
     for (let i = 0; i < this.arr.length; i++) {
       if(this.arr[i].quantity!="Total Amount(₹)"){
@@ -52,7 +52,7 @@ export class AddToCartComponent implements AfterViewInit, OnInit {
       this.arr.push({ "name": "", "photo": [{ "path": "" }], "description": "", "price": "", "quantity": "Total Amount(₹)", "total": this.finalTotal })
 
       }
-    
+
   }
     // (this.arr.filter(obj=>obj.quantity=="Total Amount(₹)").length>0)?"":this.arr.push({ "name": "", "photo": [{ "path": "" }], "description": "", "price": "", "quantity": "Total Amount(₹)", "total": 0 });
     localStorage.setItem('order', JSON.stringify(this.arr))
@@ -68,7 +68,7 @@ export class AddToCartComponent implements AfterViewInit, OnInit {
   dataNotFound = false;
 
 
- 
+
 
   @ViewChild(MatPaginator) paginator !: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -77,7 +77,7 @@ export class AddToCartComponent implements AfterViewInit, OnInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
- 
+
 
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
@@ -88,8 +88,8 @@ export class AddToCartComponent implements AfterViewInit, OnInit {
     }
   }
   sub(element: any) {
-   
-   
+
+
     this.arr.filter(obj => {
       if (JSON.stringify(obj._id) == JSON.stringify(element._id)) {
         obj.quantity--;
@@ -98,14 +98,14 @@ export class AddToCartComponent implements AfterViewInit, OnInit {
       }
     });
     this.arr[this.arr.length-1].total=this.finalTotal
-    
+
     this.dataSource = new MatTableDataSource<any>(this.arr);
     localStorage.setItem('order', JSON.stringify(this.arr))
 
 
   }
   add(element: any) {
-  
+
     this.arr.filter(obj => {
       if (JSON.stringify(obj._id) == JSON.stringify(element._id)) {
         obj.quantity++;
@@ -120,14 +120,14 @@ export class AddToCartComponent implements AfterViewInit, OnInit {
 
   }
   delete(element: any) {
-    
+
     this.arr = JSON.parse(localStorage.getItem("order")!)
 
     this.finalTotal = this.finalTotal - (JSON.parse(element.price) * JSON.parse(element.quantity));
 
     this.arr[this.arr.length-1].total=this.finalTotal
     this.arr = this.arr.filter(obj => JSON.stringify(obj._id) != JSON.stringify(element._id));
-        
+    this.toastr.success('....', "Removed from cart");
     if(this.arr.length==1)this.arr=[]
     this.dataSource = new MatTableDataSource<any>(this.arr);
     localStorage.setItem('order', JSON.stringify(this.arr))
@@ -137,7 +137,7 @@ export class AddToCartComponent implements AfterViewInit, OnInit {
 
   }
   proceed() {
-    let arr: any[] = []   
+    let arr: any[] = []
     this.openDialog(arr)
 
     // this.paynow()
@@ -221,18 +221,19 @@ export class AddToCartComponent implements AfterViewInit, OnInit {
   @HostListener('window:payment.success', ['$event'])
   onPaymentSuccess(event: any): void {
     this.message = "Success Payment";
-    alert(this.message);
+    this.toastr.success('....',"Payment Completed Successfully ");
+
     this.arr.pop()
 let order={
   address:this.address,
   razorpay_payment_id:event.detail.razorpay_payment_id,
   finalTotal:""+this.finalTotal,
-  dishs:this.arr 
+  dishs:this.arr
 
 }
 this.service.postOrder(order).subscribe(data=>{
   console.log(data);
-  
+
 })
 this.arr=[];
    localStorage.setItem('order',JSON.stringify(this.arr));

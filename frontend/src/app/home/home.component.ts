@@ -37,7 +37,7 @@ export class HomeComponent implements OnInit {
   imgIterate:number[]=[]
   currentUser:any;
   temp:any[]=[]
-    constructor(public dialog: MatDialog,private toastr: ToastrService,private userService:UserService, private router:Router) { 
+    constructor(public dialog: MatDialog,private toastr: ToastrService,private userService:UserService, private router:Router) {
       Chart.register(Annotation)
     }
 
@@ -47,26 +47,26 @@ export class HomeComponent implements OnInit {
     this.userService.getMessageUser().subscribe(data=>{
       this.currentUser=(localStorage.getItem('currentUser'))?JSON.parse(localStorage.getItem('currentUser')!):"";
 
-   
+
     })
 
     this.currentUser=(localStorage.getItem('currentUser'))?JSON.parse(localStorage.getItem('currentUser')!):"";
 this.userService.getOrder().subscribe(data=>{
-    
+
   this.orders=data.results;
   console.log(this.orders);
   this.orders=this.orders.map((obj:any)=>{
     return ({
       ...obj,
-      dishs: obj.dishs.filter((dish:any) => dish._vender._id === this.currentUser._id) 
+      dishs: obj.dishs.filter((dish:any) => dish._vender._id === this.currentUser._id)
     })
    });
 
 
-   this.orders=this.orders.filter((data:any)=>data.dishs.length!=0) 
+   this.orders=this.orders.filter((data:any)=>data.dishs.length!=0)
   //  for (let i = 0; i < this.orders.length; i++)(this.orders[i].dishs.length==0)?this.orders.splice(i,1):"";
-    
- 
+
+
    console.log(this.orders);
    this.pending=this.orders.filter((data:any)=>data.status=='pending').length
    this.cooking=this.orders.filter((data:any)=>data.status=='cooking').length
@@ -93,10 +93,10 @@ if(data=='order'){
 if(data=='home'){
   // let element = document.getElementById('home') as HTMLElement;
   // element.scrollIntoView({behavior: 'smooth'})
-  window.scroll(0,0); 
+  window.scroll(0,0);
 }
-  
-  
+
+
   });
     this.feed=[
       {
@@ -122,8 +122,8 @@ if(data=='home'){
 
 for (let i = 0; i < 7; i++) {
 
-  
-  const yesterday = new Date(this.date)  
+
+  const yesterday = new Date(this.date)
   yesterday.setDate(yesterday.getDate() - i)
   var dd = String(yesterday.getDate()).padStart(2, '0');
 var mm = String(yesterday.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -131,7 +131,7 @@ var yyyy = yesterday.getFullYear();
 let today = dd + '/' + mm + '/' + yyyy;
   // yesterday.toDateString()
   this.barChartLabels.unshift(today)
-  
+
 }
 
   }
@@ -141,23 +141,23 @@ let today = dd + '/' + mm + '/' + yyyy;
   scroll(el: HTMLElement) {
     // el.scrollIntoView();
     console.log(el);
-    
+
     el.scrollIntoView({behavior: 'smooth'});
 }
  a:any[]=[]
 addToCart(dish:any){
   this.a=JSON.parse(localStorage.getItem("order")!);
    (this.a==null)?this.a=[]:"";
-  
-   
+
+
    (this.a.filter((obj)=>JSON.stringify(obj._id)==JSON.stringify(dish._id)).length>0)?
 this.a.filter((obj)=>JSON.stringify(obj._id)==JSON.stringify(dish._id)?obj.quantity++:""):this.a.push(dish);
 
 (this.a.filter((obj)=>JSON.stringify(obj._id)==JSON.stringify(dish._id)).length>0)?
 this.a.filter((obj)=>JSON.stringify(obj._id)==JSON.stringify(dish._id)?obj.total=obj.quantity*obj.price:""):"";
- 
-   
-     
+
+
+this.toastr.success('', 'Successfully Added! ');
   localStorage.setItem("order",JSON.stringify(this.a))
   this.userService.sendMessage("order")
 
@@ -406,7 +406,6 @@ orderStatus(data:any){
   console.log(data);
   // this.userService.sendMessageOrder(data);
   this.router.navigate(['showVenderOrders',data])
-  
+
 }
 }
- 
